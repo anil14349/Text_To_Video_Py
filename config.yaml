@@ -1,5 +1,5 @@
 model:
-  name: "gpt2"
+  name: "gpt2-medium"
   max_length: 1024
   max_summary_length: 150
   max_lines: 8

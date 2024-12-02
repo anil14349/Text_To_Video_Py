@@ -1,13 +1,20 @@
 import gradio as gr
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from pathlib import Path
 
-from utils.config import Config
-from model.pipeline import ResumePipeline
-from utils.text_processor import TextProcessor
-from utils.tts_generator import TTSGenerator
-from utils.evaluator import ResumeEvaluator
+# Add project root to PYTHONPATH
+project_root = Path(__file__).resolve().parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
+from src.model.core import ResumePipeline
+from src.utils import (
+    Config,
+    TextProcessor,
+    TTSGenerator,
+    ResumeEvaluator
+)
 
 class GradioInterface:
     def __init__(self):

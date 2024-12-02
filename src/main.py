@@ -1,16 +1,24 @@
 import os
+import sys
 import nltk
 from typing import Dict, Any
+from pathlib import Path
 
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+# Add project root to PYTHONPATH first
+project_root = Path(__file__).resolve().parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 
-from src.utils.config import Config
-from src.utils.text_processor import TextProcessor
-from src.utils.tts_generator import TTSGenerator
-from src.utils.model_manager import ModelManager
-from src.utils.evaluator import ResumeEvaluator
-from src.model.core.pipeline import ResumePipeline
+# Group all imports at the top
+from src.model.core import ResumePipeline
+from src.utils import (
+    Config,
+    TextProcessor,
+    TTSGenerator,
+    ModelManager,
+    ResumeEvaluator
+)
+from src.model.utils import load_training_data
 
 # Download required NLTK data
 try:
@@ -109,7 +117,7 @@ def main():
                 continue
                 
             try:
-                from src.model.utils.dataset import load_training_data
+
                 train_texts, train_summaries, val_texts, val_summaries = load_training_data(
                     data_path,
                     val_split=config.config.get('training', {}).get('validation_split', 0.2)
@@ -224,7 +232,7 @@ def main():
                     continue
                     
                 try:
-                    from src.model.utils.dataset import load_training_data
+                    
                     test_texts, test_summaries, _, _ = load_training_data(
                         test_data_path,
                         val_split=config.config.get('training', {}).get('validation_split', 0.2)

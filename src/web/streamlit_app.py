@@ -5,8 +5,19 @@ import torch
 import plotly.graph_objects as go
 from datetime import datetime
 import os
+import sys
+from pathlib import Path
 from typing import Optional, Dict
 import logging
+
+# Add project root to PYTHONPATH
+project_root = Path(__file__).resolve().parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
+# Import project modules
+from src.model.core import ResumePipeline
+from src.utils import Config, TTSGenerator
 
 # Configure page at the very beginning
 st.set_page_config(
@@ -281,12 +292,8 @@ class StreamlitApp:
             """)
 
 def main():
-    from src.model.core.pipeline import ResumePipeline
-    from utils.tts_generator import TTSGenerator
-    from utils.config import Config
-
     # Load configuration
-    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'config.yaml')
+    config_path = os.path.join(project_root, 'config.yaml')
     config = Config(config_path)
 
     # Initialize pipeline and TTS components with error handling
