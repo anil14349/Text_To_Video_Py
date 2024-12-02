@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: resume-summarizer-ingress
+  namespace: resume-summarizer
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: resume-summarizer.local
+    http:
+      paths:
+      - path: /gradio
+        pathType: Prefix
+        backend:
+          service:
+            name: gradio
+            port:
+              number: 80
+      - path: /streamlit
+        pathType: Prefix
+        backend:
+          service:
+            name: streamlit
+            port:
+              number: 80
+      - path: /grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 80

@@ -1,0 +1,117 @@
+model:
+  name: "gpt2"
+  max_length: 1024
+  max_summary_length: 150
+  max_lines: 8
+  hf_repo: "anil14349/resume-model"  # HuggingFace repository name
+  generation:
+    temperature: 0.6
+    top_p: 0.85
+    top_k: 30
+    no_repeat_ngram_size: 3
+    repetition_penalty: 1.5
+    length_penalty: 1.5
+    early_stopping: true
+    do_sample: true
+    num_return_sequences: 1
+
+training:
+  num_epochs: 3
+  batch_size: 4
+  eval_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  logging_steps: 10
+  eval_steps: 50
+  save_steps: 100
+  save_total_limit: 2
+  fp16: false
+  gradient_checkpointing: true
+  optimizer: "adamw_torch"
+  validation_split: 0.2
+
+paths:
+  cache_dir: "models_cache"
+  output_dir: "resume_model"
+  log_dir: "logs"
+  audio_dir: "audio_outputs"
+
+prompts:
+  professional_overview: |
+    Based on the resume, provide a professional overview focusing on:
+    1. Career level and years of experience
+    2. Primary expertise and domain
+    3. Notable achievements
+
+  skills_certifications: |
+    Extract and summarize the key skills and certifications from this resume:
+
+  current_role: |
+    Summarize the current or most recent role from this resume, including:
+    1. Company and position
+    2. Key responsibilities
+    3. Notable achievements
+
+  previous_experience: |
+    Summarize the previous work experience from this resume, including:
+    1. Previous roles and companies
+    2. Key responsibilities and achievements
+    3. Career progression
+
+  train: |
+    Resume Text:
+    {text}
+
+    Summary:
+    {summary}
+
+  validation: |
+    Resume Text:
+    {text}
+
+    Summary:
+    {summary}
+
+device:
+  force_cpu: false  # Changed to false to allow GPU usage when available
+  mps_watermark_ratio: 0
+  cuda_visible_devices: ""
+
+tts:
+  female_voice:
+    temperature: 0.3
+    top_p: 0.7
+    top_k: 20
+    oral_level: 0
+    break_level: 3
+    laugh_level: 0
+  male_voice:
+    temperature: 0.3
+    top_p: 0.7
+    top_k: 20
+    oral_level: 6
+    break_level: 4
+    laugh_level: 0
+
+monitoring:
+  prometheus_port: 8000
+  grafana_port: 3000
+  metrics_update_interval: 15  # seconds
+  enable_gpu_metrics: true
+
+web_interface:
+  gradio:
+    port: 7860
+    share: true
+    theme: "default"
+    examples_dir: "examples"
+  
+  streamlit:
+    port: 8501
+    theme:
+      primaryColor: "#FF4B4B"
+      backgroundColor: "#FFFFFF"
+      secondaryBackgroundColor: "#F0F2F6"
+      textColor: "#262730"
+      font: "sans serif"

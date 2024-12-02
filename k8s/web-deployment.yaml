@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gradio
+  namespace: resume-summarizer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gradio
+  template:
+    metadata:
+      labels:
+        app: gradio
+    spec:
+      containers:
+      - name: gradio
+        image: resume-summarizer:latest
+        command: ["python", "src/web/gradio_app.py"]
+        ports:
+        - containerPort: 7860
+          name: http
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: models
+          mountPath: /app/data/models
+        - name: config
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+        env:
+        - name: CONFIG_PATH
+          value: /app/config.yaml
+        - name: PYTHONPATH
+          value: /app
+      volumes:
+      - name: models
+        persistentVolumeClaim:
+          claimName: models-pvc
+      - name: config
+        configMap:
+          name: resume-summarizer-config
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamlit
+  namespace: resume-summarizer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: streamlit
+  template:
+    metadata:
+      labels:
+        app: streamlit
+    spec:
+      containers:
+      - name: streamlit
+        image: resume-summarizer:latest
+        command: ["streamlit", "run", "src/web/streamlit_app.py"]
+        ports:
+        - containerPort: 8501
+          name: http
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: models
+          mountPath: /app/data/models
+        - name: config
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+        env:
+        - name: CONFIG_PATH
+          value: /app/config.yaml
+        - name: PYTHONPATH
+          value: /app
+      volumes:
+      - name: models
+        persistentVolumeClaim:
+          claimName: models-pvc
+      - name: config
+        configMap:
+          name: resume-summarizer-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gradio
+  namespace: resume-summarizer
+spec:
+  selector:
+    app: gradio
+  ports:
+  - port: 80
+    targetPort: http
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamlit
+  namespace: resume-summarizer
+spec:
+  selector:
+    app: streamlit
+  ports:
+  - port: 80
+    targetPort: http
+  type: LoadBalancer

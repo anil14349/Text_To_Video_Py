@@ -1,0 +1,70 @@
+model:
+  name: "gpt2"
+  max_length: 1024
+  max_summary_length: 100
+  max_lines: 8
+  cache_dir: "models_cache"
+
+generation:
+  num_beams: 5
+  no_repeat_ngram_size: 3
+  temperature: 0.6
+  top_k: 30
+  top_p: 0.85
+  length_penalty: 1.5
+  early_stopping: true
+  repetition_penalty: 1.5
+
+training:
+  batch_size: 4
+  learning_rate: 2e-5
+  num_epochs: 3
+  validation_split: 0.2
+  weight_decay: 0.01
+  logging_steps: 10
+  eval_steps: 50
+  save_steps: 100
+  save_total_limit: 2
+
+paths:
+  output_dir: "resume_model"
+  log_dir: "logs"
+  audio_dir: "audio_outputs"
+
+tts:
+  female_voice:
+    temperature: 0.3
+    top_p: 0.7
+    top_k: 20
+    oral_level: 0
+    break_level: 3
+    laugh_level: 0
+  male_voice:
+    temperature: 0.3
+    top_p: 0.7
+    top_k: 20
+    oral_level: 6
+    break_level: 4
+    laugh_level: 0
+
+monitoring:
+  prometheus_port: 8000
+  grafana_port: 3000
+  metrics_update_interval: 15  # seconds
+  enable_gpu_metrics: true
+
+web_interface:
+  gradio:
+    port: 7860
+    share: true
+    theme: "default"
+    examples_dir: "examples"
+  
+  streamlit:
+    port: 8501
+    theme:
+      primaryColor: "#FF4B4B"
+      backgroundColor: "#FFFFFF"
+      secondaryBackgroundColor: "#F0F2F6"
+      textColor: "#262730"
+      font: "sans serif"

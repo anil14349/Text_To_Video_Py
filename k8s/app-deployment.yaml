@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resume-summarizer
+  namespace: resume-summarizer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: resume-summarizer
+  template:
+    metadata:
+      labels:
+        app: resume-summarizer
+    spec:
+      containers:
+      - name: resume-summarizer
+        image: resume-summarizer:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: metrics
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        volumeMounts:
+        - name: models
+          mountPath: /app/data/models
+        - name: config
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+        env:
+        - name: CONFIG_PATH
+          value: /app/config.yaml
+        - name: PYTHONPATH
+          value: /app
+      volumes:
+      - name: models
+        persistentVolumeClaim:
+          claimName: models-pvc
+      - name: config
+        configMap:
+          name: resume-summarizer-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resume-summarizer
+  namespace: resume-summarizer
+spec:
+  selector:
+    app: resume-summarizer
+  ports:
+  - port: 8000
+    targetPort: metrics
+  type: ClusterIP
