@@ -1,14 +1,14 @@
-# Resume Summarization AI
+# Text to Video Generator
 
-An intelligent system that generates concise, professional summaries from resume documents using advanced natural language processing techniques. The system includes text-to-speech capabilities, monitoring, and both Gradio and Streamlit web interfaces.
+An intelligent system that generates video content from text descriptions using advanced natural language processing and video generation techniques. The system includes text-to-speech capabilities, monitoring, and both Gradio and Streamlit web interfaces.
 
 ## Features
 
-- **Resume Processing**
-  - Multi-format support (PDF, DOCX, TXT)
-  - Intelligent text extraction and preprocessing
-  - GPT-2 based summary generation
-  - Text-to-Speech generation with multiple voices
+- **Text-to-Video Generation**
+  - Natural language text input
+  - Advanced video generation models
+  - Text-to-Speech integration
+  - Multiple style options
 
 - **Web Interfaces**
   - Gradio interface for simple, focused processing
@@ -22,7 +22,24 @@ An intelligent system that generates concise, professional summaries from resume
   - System resource monitoring
   - Model performance tracking
 
+## Important Note About Model Files
+
+This repository does not include large model files. You will need to download them separately. The following files are required:
+
+- `asset/gpt/model.safetensors`
+- `models_cache/distilgpt2/model.safetensors`
+- `asset/Embed.safetensors`
+
+These files can be downloaded from their respective model hubs or generated using the provided scripts.
+
 ## Installation
+
+### Prerequisites
+
+Before installation, ensure you have:
+- Python 3.11 or higher
+- Git
+- Sufficient disk space for model files (approximately 2GB)
 
 ### Windows Setup
 
@@ -54,14 +71,14 @@ chmod +x setup.sh
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
+git clone https://github.com/anil14349/Text_To_Video_Py.git
 cd t2v
 ```
 
 2. Create and activate a virtual environment:
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
 3. Install dependencies:
@@ -69,10 +86,33 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Download required NLTK data:
-```python
-python -c "import nltk; nltk.download('punkt')"
+4. Download model files:
+```bash
+# Script will be provided to download necessary model files
+python scripts/download_models.py  # Note: This is a placeholder. Actual script needs to be implemented.
 ```
+
+## Model Files Management
+
+This repository uses `.gitignore` to exclude large model files. These files need to be managed separately from the Git repository. The following directories are ignored:
+
+```
+# Model files
+*.safetensors
+*.ckpt
+*.pth
+*.pt
+
+# Model directories
+models/
+models_cache/
+asset/
+```
+
+When sharing this project, ensure you provide a way for others to obtain the necessary model files, either through:
+- A model download script
+- Links to the original model sources
+- A separate file storage solution
 
 ## Configuration
 
@@ -277,12 +317,11 @@ t2v/
 
 ## Features in Detail
 
-### Resume Processing
-- Supports multiple file formats
-- Intelligent text extraction
-- Advanced preprocessing
-- GPT-2 based summarization
-- Configurable summary parameters
+### Text-to-Video Generation
+- Supports multiple text formats
+- Advanced video generation models
+- Text-to-Speech integration
+- Configurable video parameters
 
 ### Text-to-Speech
 - Multiple voice options (male/female)
@@ -311,10 +350,10 @@ t2v/
 ## Web Interface Features
 
 ### Gradio Interface
-- Simple file upload
+- Simple text input
 - Real-time processing
 - Audio generation options
-- Example resume processing
+- Example text processing
 
 ### Streamlit Dashboard
 - Multiple pages/tabs
