@@ -11,10 +11,6 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 # Load environment variables
 load_dotenv()
 
-# Configure MPS memory usage
-if hasattr(torch.mps, 'set_per_process_memory_fraction'):
-    torch.mps.set_per_process_memory_fraction(0.7)  # Use only 70% of available memory
-
 logger = logging.getLogger(__name__)
 
 class ResumePipeline:
@@ -24,15 +20,7 @@ class ResumePipeline:
         self.config = config
         self.model_config = config.get_model_config()
         
-        # Set device with memory management for MPS
-        if torch.backends.mps.is_available():
-            self.device = "mps"
-            # Set environment variable for MPS memory
-            os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.7"
-        elif torch.cuda.is_available():
-            self.device = "cuda"
-        else:
-            self.device = "cpu"
+        self._setup_device()
             
         logger.info("Using device: %s", self.device)
         
@@ -47,6 +35,22 @@ class ResumePipeline:
         # Set up cache directory
         self.cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'models_cache')
         os.makedirs(self.cache_dir, exist_ok=True)
+
+    def _setup_device(self):
+        """Setup the device and optimize memory settings."""
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda")
+            # CUDA specific optimizations
+            torch.cuda.empty_cache()
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+            # MPS specific optimizations
+            import torch.mps
+            torch.mps.set_per_process_memory_fraction(0.7)
+        else:
+            self.device = torch.device("cpu")
+            
+        logger.info(f"Using device: {self.device}")
 
     def initialize_model(self):
         """Load the model and tokenizer."""
@@ -289,7 +293,7 @@ class ResumePipeline:
         output_dir = os.path.join(self.cache_dir, 'trained_model')
         
         # Adjust batch size based on device
-        if self.device == "mps":
+        if self.device.type == "mps":
             batch_size = 1  # Smaller batch size for MPS
             grad_accum = 16  # Increase gradient accumulation to compensate
         else:
@@ -315,7 +319,7 @@ class ResumePipeline:
             load_best_model_at_end=True,
             # Memory optimization
             gradient_checkpointing=True,
-            optim="adamw_torch_fused" if self.device == "cuda" else "adamw_torch",
+            optim="adamw_torch_fused" if self.device.type == "cuda" else "adamw_torch",
         )
         
         # Initialize trainer
