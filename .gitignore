@@ -1,3 +1,19 @@
+# Environment and secrets
+.env
+.env.*
+*.env
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Data and model files
+data/
+models_cache/
+audio_outputs/
+resume_model/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -20,15 +36,6 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
-.env
-.venv/
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
 # IDE
 .idea/
 .vscode/
@@ -37,66 +44,25 @@ venv.bak/
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Large files and models
-*.safetensors
-*.ckpt
-*.pth
-*.pt
-*.bin
-*.h5
-*.hdf5
-*.pkl
-*.model
-*.onnx
-*.tflite
-*.pb
-*.savedmodel
-*.weights
-*.tar
-*.tar.gz
-*.zip
-*.rar
-*.7z
+# Testing
+test_*.py
+*_test.py
+test_token.py
+test_repo_creation.py
 
-# Model directories
-models/
-model/
-models_cache/
-src/models_cache/
-asset/
-assets/
-checkpoints/
-weights/
-pretrained/
-saved_models/
-model_outputs/
-.cache/
-.huggingface/
-wandb/
-runs/
-
-# Audio and video files
-*.mp4
-*.avi
-*.mov
-*.wmv
-*.flv
-*.mkv
-*.wav
-*.mp3
-*.ogg
-*.m4a
-*.flac
-
-# Logs and temporary files
+# Logs
 logs/
 *.log
+
+# Temporary files
 temp/
 tmp/
-*.tmp
-.DS_Store
-
-# Git LFS files (if you decide to use it later)
-.gitattributes
+.temp/
+.tmp/

@@ -45,8 +45,11 @@ class ModelManager:
         if not os.path.exists(version_dir):
             raise ValueError(f"Model version {version_name} not found")
             
-        model = GPT2LMHeadModel.from_pretrained(version_dir)
+        model = GPT2LMHeadModel.from_pretrained(version_dir, weights_only=True)
         tokenizer = GPT2Tokenizer.from_pretrained(version_dir)
+        
+        # Enable batch_first for better performance
+        model.config.batch_first = True
         
         with open(os.path.join(version_dir, "metadata.json"), "r") as f:
             metadata = json.load(f)

@@ -1,8 +1,13 @@
 import os
 import sys
 import nltk
+import warnings
 from typing import Dict, Any
 from pathlib import Path
+
+# Filter out specific warnings
+warnings.filterwarnings('ignore', message='You are using `torch.load` with `weights_only=False`')
+warnings.filterwarnings('ignore', message='enable_nested_tensor is True')
 
 # Add project root to PYTHONPATH first
 project_root = Path(__file__).resolve().parent.parent
